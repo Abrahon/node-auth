@@ -23,22 +23,36 @@
 //   })
 //   .catch((err) => console.error(err));
 
-require("dotenv").config(); // MUST be first line
-
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
-const authRoutes = require("./routes/auth.routes");
 
 const app = express();
-app.use(express.json());
 
-app.use("/api/auth", authRoutes);
+// ✅ DEBUG middleware (GOOD)
+app.use((req, res, next) => {
+  console.log(req.method, req.url);
+  next();
+});
 
+// ✅ Parse JSON ONLY for non-GET requests
+app.use((req, res, next) => {
+  if (req.method === "GET") return next();
+  express.json()(req, res, next);
+});
+
+// Routes
+app.use("/api/auth", require("./routes/auth.routes"));
+
+
+
+// DB
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.error(err));
+  .catch(console.error);
 
+// Server
 app.listen(process.env.PORT, () =>
   console.log(`Server running on port ${process.env.PORT}`)
 );

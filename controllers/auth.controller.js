@@ -80,6 +80,7 @@ exports.verifyEmail = async (req, res, next) => {
   }
 };
 
+
 // --- LOGIN ---
 exports.login = async (req, res, next) => {
   try {
